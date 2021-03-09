@@ -1,34 +1,50 @@
 <script context="module" lang="ts">
-	export function preload() {
-		return this.fetch(`blog.json`)
-			.then((r: { json: () => any }) => r.json())
-			.then((fields: { Name: string }) => {
-				return { fields };
-			});
-	}
+  export async function preload() {
+    const data = await this.fetch("blog.json").then((r) => r.json());
+
+    return { data };
+  }
 </script>
 
 <script lang="ts">
-	export let fields: { Name: string }[];
+  import type { AirtableRecord, PlantField } from "../../airtable";
+  import LastWatered from "./_components/LastWatered.svelte";
+  export let data: AirtableRecord<PlantField>[];
+  console.log(data);
 </script>
 
 <svelte:head>
-	<title>Blog</title>
+  <title>Blog</title>
 </svelte:head>
 
 <ul>
-	{#each fields as field}
-		<!-- we're using the non-standard `rel=prefetch` attribute to
-				tell Sapper to load the data for the page as soon as
-				the user hovers over the link or taps it, instead of
-				waiting for the 'click' event -->
-		<li>{field.Name}</li>
-	{/each}
+  {#each data as plant}
+    <li>
+      {#if plant.fields.Images}
+        <img src={plant.fields.Images[0].thumbnails.small.url} />
+      {/if}
+      {plant.fields.Name}
+      <LastWatered {plant} />
+    </li>
+  {/each}
 </ul>
 
 <style>
-	ul {
-		margin: 0 0 1em 0;
-		line-height: 1.5;
-	}
+  ul {
+    line-height: 1.5;
+    list-style: none;
+    display: grid;
+    grid-gap: 2em;
+  }
+
+  li {
+    padding: 1em;
+    background: white;
+    display: flex;
+    align-items: center;
+    border-radius: 1em;
+  }
+  img {
+    padding-right: 1em;
+  }
 </style>
