@@ -32,6 +32,7 @@
     context: {
       data: plant,
       plants: $plants,
+      undo: undefined,
     },
     states: {
       boot: {
@@ -59,17 +60,32 @@
         on: {
           RESOLVE: {
             target: "watered",
-            actions: assign({
-              data: (_, event) => {
-                plants.patch(event.data);
-
-                return event.data;
-              },
-            }),
+            actions: [
+              assign({
+                undo: (_, event) => {
+                  const { undo } = plants.patch(event.data);
+                  return undo;
+                },
+              }),
+              assign({ data: (_, event) => event.data }),
+            ],
           },
         },
       },
-      watered: {},
+      watered: {
+        on: {
+          UNDO: {
+            target: "idle",
+            actions: [
+              (context) => plants.set(context.undo),
+              assign({
+                plants: (context) => context.undo,
+                plant: (context) => context.undo.get(plant.id),
+              }),
+            ],
+          },
+        },
+      },
     },
   });
   const { state, send } = useMachine(fetchMachine, {
@@ -116,7 +132,9 @@
 </span>
 
 {#if $state.matches("watered")}
-  <span class="watered">💦 Watered!</span>
+  <span class="watered"
+    >💦 Watered! <button on:click={() => send("UNDO")}>undo</button></span
+  >
 {:else if $state.matches("loading")}
   <button disabled={true}>Watering</button>
 {:else}
