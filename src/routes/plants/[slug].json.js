@@ -1,10 +1,3 @@
-import posts from "./_posts.js";
-
-const lookup = new Map();
-posts.forEach((post) => {
-  lookup.set(post.slug, JSON.stringify(post));
-});
-
 export function get(req, res) {
   // the `slug` parameter is available because
   // this file is called [slug].json.js
@@ -15,7 +8,7 @@ export function get(req, res) {
       "Content-Type": "application/json",
     });
 
-    res.end(lookup.get(slug));
+    res.end(JSON.stringify({ ok: "sure" }));
   } else {
     res.writeHead(404, {
       "Content-Type": "application/json",

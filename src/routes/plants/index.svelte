@@ -1,16 +1,22 @@
 <script context="module" lang="ts">
   export async function preload() {
-    const data = await this.fetch("blog.json").then((r) => r.json());
+    const data = await this.fetch("plants.json").then((r) => r.json());
 
     return { data };
   }
 </script>
 
 <script lang="ts">
+  import { setContext } from "svelte";
+  import { flip } from "svelte/animate";
+
   import type { AirtableRecord, PlantField } from "../../airtable";
   import LastWatered from "./_components/LastWatered.svelte";
+  import { initPlantsStore, plantsContext } from "../../stores/plants.store";
   export let data: AirtableRecord<PlantField>[];
-  console.log(data);
+
+  const plants = initPlantsStore(data);
+  setContext(plantsContext, plants);
 </script>
 
 <svelte:head>
@@ -18,10 +24,13 @@
 </svelte:head>
 
 <ul>
-  {#each data as plant}
-    <li>
+  {#each Array.from($plants) as [id, plant] (id)}
+    <li data-plant={id} animate:flip>
       {#if plant.fields.Images}
-        <img src={plant.fields.Images[0].thumbnails.small.url} />
+        <img
+          src={plant.fields.Images[0].thumbnails.small.url}
+          alt={`${plant.fields.Name}'s latest image`}
+        />
       {/if}
       {plant.fields.Name}
       <LastWatered {plant} />

@@ -19,14 +19,19 @@
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { createMachine, assign } from "@xstate/fsm";
   import { useMachine } from "xstate-svelte/dist/fsm";
+  import { getContext } from "svelte";
+  import { plantsContext } from "../../../stores/plants.store";
+  import type { PlantsStore } from "../../../stores/plants.store";
 
   export let plant: AirtableRecord<PlantField>;
+  const plants = getContext<PlantsStore>(plantsContext);
 
   const fetchMachine = createMachine({
     id: "fetch",
     initial: "boot",
     context: {
       data: plant,
+      plants: $plants,
     },
     states: {
       boot: {
@@ -55,7 +60,11 @@
           RESOLVE: {
             target: "watered",
             actions: assign({
-              data: (_, event) => event.data,
+              data: (_, event) => {
+                plants.patch(event.data);
+
+                return event.data;
+              },
             }),
           },
         },
@@ -67,7 +76,7 @@
     actions: {
       load: async () => {
         const watered: AirtableRecord<PlantField> = await fetch(
-          "blog/water.json",
+          "plants/water.json",
           {
             method: "PATCH",
             headers: {
@@ -86,6 +95,7 @@
 
   send("INIT");
 
+  let fields: PlantField;
   $: ({
     context: {
       data: { fields },
@@ -95,6 +105,8 @@
   function water() {
     send("FETCH");
   }
+
+  console.log($state);
 </script>
 
 <span>
