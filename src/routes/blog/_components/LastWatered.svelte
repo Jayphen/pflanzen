@@ -1,26 +1,4 @@
-<script lang="ts">
-  import type { AirtableRecord, PlantField } from "../../../airtable";
-
-  export let plant: AirtableRecord<PlantField>;
-
-  let state = "idle";
-
-  async function water() {
-    state = "watering";
-    const watered: AirtableRecord<PlantField> = await fetch("blog/water.json", {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        id: plant.id,
-      }),
-    }).then((r) => r.json());
-
-    plant = watered;
-    state = "idle";
-  }
-
+<script lang="ts" context="module">
   const formatDate = (date: string) => {
     if (!date) return "Never";
     const _date = new Date(date);
@@ -28,18 +6,118 @@
       _date
     );
   };
+
+  function today() {
+    const _date = new Date();
+    return `${_date.getFullYear()}-${(_date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${_date.getDate().toString().padStart(2, "0")}`;
+  }
+</script>
+
+<script lang="ts">
+  import type { AirtableRecord, PlantField } from "../../../airtable";
+  import { createMachine, assign } from "@xstate/fsm";
+  import { useMachine } from "xstate-svelte/dist/fsm";
+
+  export let plant: AirtableRecord<PlantField>;
+
+  const fetchMachine = createMachine({
+    id: "fetch",
+    initial: "boot",
+    context: {
+      data: plant,
+    },
+    states: {
+      boot: {
+        on: {
+          // use an explicit INIT event to determine whether we should
+          // start out in the 'watered' state
+          // todo: maybe this is bad. "just watered" and "already watered" are
+          // maybe 2 different states
+          INIT: [
+            {
+              cond: () => plant.fields["Last Watered"] === today(),
+              target: "watered",
+            },
+            { target: "idle" },
+          ],
+        },
+      },
+      idle: {
+        on: {
+          FETCH: "loading",
+        },
+      },
+      loading: {
+        entry: ["load"],
+        on: {
+          RESOLVE: {
+            target: "watered",
+            actions: assign({
+              data: (_, event) => event.data,
+            }),
+          },
+        },
+      },
+      watered: {},
+    },
+  });
+  const { state, send } = useMachine(fetchMachine, {
+    actions: {
+      load: async () => {
+        const watered: AirtableRecord<PlantField> = await fetch(
+          "blog/water.json",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: plant.id,
+            }),
+          }
+        ).then((r) => r.json());
+
+        send({ type: "RESOLVE", data: watered });
+      },
+    },
+  });
+
+  send("INIT");
+
+  $: ({
+    context: {
+      data: { fields },
+    },
+  } = $state);
+
+  function water() {
+    send("FETCH");
+  }
 </script>
 
 <span>
-  - last watered {formatDate(plant.fields["Last Watered"])}
+  - last watered {$state.matches("watered")
+    ? "Today"
+    : formatDate(fields["Last Watered"])}
 </span>
 
-<button on:click={water} disabled={state === "watering"}>Water plant</button>
+{#if $state.matches("watered")}
+  <span class="watered">💦 Watered!</span>
+{:else if $state.matches("loading")}
+  <button disabled={true}>Watering</button>
+{:else}
+  <button on:click={water}>Water plant</button>
+{/if}
 
 <style>
   span {
     color: #737373;
     font-size: 0.75em;
+  }
+  .watered {
+    margin-left: auto;
   }
   button {
     background: white;
