@@ -9,7 +9,7 @@ const dev = NODE_ENV === "development";
 
 const app = express().use(
   express.json(),
-  express.urlencoded(),
+  express.urlencoded({ extended: true }),
   compression({ threshold: 0 }),
   sirv("static", { dev }),
   sapper.middleware()
