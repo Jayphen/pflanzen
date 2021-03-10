@@ -1,6 +1,9 @@
 <script context="module" lang="ts">
-  export async function preload() {
-    const data = await this.fetch("plants.json").then((r) => r.json());
+  export async function preload({ host }) {
+    const data = await fetcher("plants.json", {
+      host,
+      f: this.fetch,
+    }).then((r) => r.json());
 
     return { data };
   }
@@ -13,6 +16,7 @@
   import type { AirtableRecord, PlantField } from "../../airtable";
   import LastWatered from "./_components/LastWatered.svelte";
   import { initPlantsStore, plantsContext } from "../../stores/plants.store";
+  import { fetcher } from "../../lib/fetcher";
   export let data: AirtableRecord<PlantField>[];
 
   const plants = initPlantsStore(data);

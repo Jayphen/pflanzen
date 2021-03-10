@@ -11,7 +11,5 @@ export async function patch(req: Request, res: Response) {
     "Content-Type": "application/json",
   });
 
-  // console.log(pages)
-
   res.end(JSON.stringify(update._rawJson));
 }

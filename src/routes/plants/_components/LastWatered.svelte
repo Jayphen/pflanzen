@@ -22,6 +22,9 @@
   import { getContext } from "svelte";
   import { plantsContext } from "../../../stores/plants.store";
   import type { PlantsStore } from "../../../stores/plants.store";
+  import { fetcher } from "../../../lib/fetcher";
+  import { stores } from "@sapper/app";
+  const { page } = stores();
 
   export let plant: AirtableRecord<PlantField>;
   const plants = getContext<PlantsStore>(plantsContext);
@@ -75,9 +78,10 @@
   const { state, send } = useMachine(fetchMachine, {
     actions: {
       load: async () => {
-        const watered: AirtableRecord<PlantField> = await fetch(
+        const watered: AirtableRecord<PlantField> = await fetcher(
           "plants/water.json",
           {
+            host: $page.host,
             method: "PATCH",
             headers: {
               "Content-Type": "application/json",
@@ -105,8 +109,6 @@
   function water() {
     send("FETCH");
   }
-
-  console.log($state);
 </script>
 
 <span>
