@@ -3,7 +3,7 @@ import { base } from "../../_lib/airtable";
 import { format } from "date-fns";
 
 export async function patch(req: Request, res: Response) {
-  const update = await base("dev").update(req.body.id, {
+  const update = await base(process.env.AIRTABLE_BASE).update(req.body.id, {
     "Last Watered": format(new Date(), "yyyy-MM-dd"),
   });
 
