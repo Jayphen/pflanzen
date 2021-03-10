@@ -15,6 +15,9 @@
 </div>
 
 <style>
+  :global(html) {
+    --c-bg: #f3f8ef;
+  }
   :global(html, body, #sapper) {
     height: 100%;
   }
@@ -25,7 +28,7 @@
   }
   main {
     position: relative;
-    background-color: #afd2a3;
+    background-color: var(--c-bg);
     box-sizing: border-box;
   }
   .content {

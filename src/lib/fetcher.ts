@@ -1,17 +1,14 @@
-function resolveBackendUrl(host: string): string {
+function resolveBackendUrl(): string {
   if ((process as any).browser) return "";
-  if (process.env.NOW_REGION) return `https://${host}/`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}/`;
 
   return "";
 }
 
-export function fetcher(
-  path: string,
-  init: RequestInit & { f?: any; host: string }
-) {
+export function fetcher(path: string, init: RequestInit & { f?: any }) {
   const fetcher = init?.f || fetch;
 
-  path = resolveBackendUrl(init.host) + path;
+  path = resolveBackendUrl() + path;
 
   return fetcher(path, init);
 }

@@ -1,7 +1,7 @@
 import { base } from "../_lib/airtable";
 
 export async function get(_, res) {
-  const pages = await base("Plants").select().all();
+  const pages = await base("dev").select().all();
 
   const collator = new Intl.Collator("en", { numeric: true });
 
