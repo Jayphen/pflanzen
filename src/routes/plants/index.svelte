@@ -36,15 +36,15 @@
 </ul>
 
 <style>
+  ul,
+  li {
+    margin: 0;
+    padding: 0;
+  }
   ul {
     line-height: 1.5;
     list-style: none;
     display: grid;
-    grid-gap: 2em;
-    margin: 0;
-  }
-  li {
-    margin: 0;
-    padding: 0;
+    grid-gap: 1em;
   }
 </style>

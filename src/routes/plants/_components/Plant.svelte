@@ -1,44 +1,25 @@
+<script lang="ts" context="module">
+  const formatDate = (date: string) => {
+    if (!date) return "Never";
+    const _date = new Date(date);
+    return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
+      _date
+    );
+  };
+</script>
+
 <script lang="ts">
   import { onDestroy } from "svelte";
-  import { useMachine } from "xstate-svelte/dist/fsm";
 
   import type { AirtableRecord, PlantField } from "../../../airtable";
-  import { fetcher } from "../../../lib/fetcher";
   import LastWatered from "./LastWatered.svelte";
   import { createPlantMachine } from "./plant.machine";
-  import { stores } from "@sapper/app";
-  const { page } = stores();
 
   export let plant: AirtableRecord<PlantField>;
 
-  const { plantMachine, unsubscribe } = createPlantMachine(plant);
+  const { state, init, water, unsubscribe } = createPlantMachine(plant);
 
-  const { state, send } = useMachine(plantMachine, {
-    actions: {
-      load: async () => {
-        const watered: AirtableRecord<PlantField> = await fetcher(
-          "plants/water.json",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: plant.id,
-            }),
-          }
-        ).then((r) => r.json());
-
-        send({ type: "RESOLVE", data: watered });
-      },
-    },
-  });
-
-  send("INIT");
-
-  function water() {
-    send("FETCH");
-  }
+  init();
 
   onDestroy(unsubscribe);
 </script>
@@ -51,12 +32,24 @@
         alt={`${plant.fields.Name}'s latest image`}
       />
     {/if}
-    {plant.fields.Name}
+    <header>
+      <h2>{plant.fields.Name}</h2>
+      <span>
+        last watered {$state.matches("watered")
+          ? "Today"
+          : formatDate(plant.fields["Last Watered"])}
+      </span>
+    </header>
   </div>
+
   <LastWatered state={$state} {water} />
 </div>
 
 <style>
+  h2 {
+    margin: 0;
+    font-size: 1.2em;
+  }
   .plant {
     padding: 1em;
     background: white;

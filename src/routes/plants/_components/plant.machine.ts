@@ -1,6 +1,8 @@
 import { createMachine, assign } from "@xstate/fsm";
+import { useMachine } from "xstate-svelte/dist/fsm";
 import { getContext } from "svelte";
 import type { AirtableRecord, PlantField } from "../../../airtable";
+import { fetcher } from "../../../lib/fetcher";
 import { plantsContext, PlantsStore } from "../../../stores/plants.store";
 
 export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
@@ -9,54 +11,79 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
 
   const unsubscribe = plants.subscribe((store) => ($plants = store));
 
+  const plantMachine = createMachine({
+    id: "fetch",
+    initial: "boot",
+    context: {
+      data: plant,
+      plants: $plants,
+    },
+    states: {
+      boot: {
+        on: {
+          // use an explicit INIT event to determine whether we should
+          // start out in the 'watered' state
+          // todo: maybe this is bad. "just watered" and "already watered" are
+          // maybe 2 different states
+          INIT: [
+            {
+              cond: () => plant.fields["Last Watered"] === today(),
+              target: "watered",
+            },
+            { target: "idle" },
+          ],
+        },
+      },
+      idle: {
+        on: {
+          FETCH: "loading",
+        },
+      },
+      loading: {
+        entry: ["load"],
+        on: {
+          RESOLVE: {
+            target: "watered",
+            actions: assign({
+              data: (_, event) => {
+                plants.patch(event.data);
+
+                return event.data;
+              },
+            }),
+          },
+        },
+      },
+      watered: {},
+    },
+  });
+
+  const { state, send } = useMachine(plantMachine, {
+    actions: {
+      load: async () => {
+        const watered: AirtableRecord<PlantField> = await fetcher(
+          "plants/water.json",
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              id: plant.id,
+            }),
+          }
+        ).then((r) => r.json());
+
+        send({ type: "RESOLVE", data: watered });
+      },
+    },
+  });
+
   return {
     unsubscribe,
-    plantMachine: createMachine({
-      id: "fetch",
-      initial: "boot",
-      context: {
-        data: plant,
-        plants: $plants,
-      },
-      states: {
-        boot: {
-          on: {
-            // use an explicit INIT event to determine whether we should
-            // start out in the 'watered' state
-            // todo: maybe this is bad. "just watered" and "already watered" are
-            // maybe 2 different states
-            INIT: [
-              {
-                cond: () => plant.fields["Last Watered"] === today(),
-                target: "watered",
-              },
-              { target: "idle" },
-            ],
-          },
-        },
-        idle: {
-          on: {
-            FETCH: "loading",
-          },
-        },
-        loading: {
-          entry: ["load"],
-          on: {
-            RESOLVE: {
-              target: "watered",
-              actions: assign({
-                data: (_, event) => {
-                  plants.patch(event.data);
-
-                  return event.data;
-                },
-              }),
-            },
-          },
-        },
-        watered: {},
-      },
-    }),
+    state,
+    init: () => send("INIT"),
+    water: () => send("FETCH"),
   };
 };
 

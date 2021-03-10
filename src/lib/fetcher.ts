@@ -5,7 +5,10 @@ function resolveBackendUrl(): string {
   return "";
 }
 
-export function fetcher(path: string, init: RequestInit & { f?: any }) {
+export function fetcher(
+  path: string,
+  init: RequestInit & { f?: typeof fetch }
+) {
   const fetcher = init?.f || fetch;
 
   path = resolveBackendUrl() + path;

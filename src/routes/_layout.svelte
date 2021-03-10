@@ -34,6 +34,6 @@
   .content {
     max-width: 56em;
     margin: 0 auto;
-    padding: 2em;
+    padding: 1em;
   }
 </style>

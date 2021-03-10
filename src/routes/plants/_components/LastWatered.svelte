@@ -1,13 +1,3 @@
-<script lang="ts" context="module">
-  const formatDate = (date: string) => {
-    if (!date) return "Never";
-    const _date = new Date(date);
-    return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
-      _date
-    );
-  };
-</script>
-
 <script lang="ts">
   import type { PlantField } from "../../../airtable";
 
@@ -21,12 +11,6 @@
     },
   } = state);
 </script>
-
-<span>
-  - last watered {state.matches("watered")
-    ? "Today"
-    : formatDate(fields["Last Watered"])}
-</span>
 
 {#if state.matches("watered")}
   <span class="watered">💦 Watered!</span>
