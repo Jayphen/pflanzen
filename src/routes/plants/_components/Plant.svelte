@@ -12,7 +12,7 @@
   import { onDestroy } from "svelte";
 
   import type { AirtableRecord, PlantField } from "../../../airtable";
-  import LastWatered from "./LastWatered.svelte";
+  import Water from "./Water.svelte";
   import { createPlantMachine } from "./plant.machine";
 
   export let plant: AirtableRecord<PlantField>;
@@ -31,18 +31,26 @@
         src={plant.fields.Images[0].thumbnails.small.url}
         alt={`${plant.fields.Name}'s latest image`}
       />
+    {:else}
+      <img
+        src="images/plant.png"
+        alt={`${plant.fields.Name} placeholder image`}
+      />
     {/if}
-    <header>
+    <header class:watered={$state.matches("watered")}>
       <h2>{plant.fields.Name}</h2>
-      <span>
-        last watered {$state.matches("watered")
-          ? "Today"
-          : formatDate(plant.fields["Last Watered"])}
-      </span>
+      {#if $state.matches("watered")}
+        <span>Watered today!</span>
+      {:else}
+        <span>
+          last watered
+          {formatDate(plant.fields["Last Watered"])}
+        </span>
+      {/if}
     </header>
   </div>
 
-  <LastWatered state={$state} {water} />
+  <Water state={$state} {water} />
 </div>
 
 <style>
@@ -62,6 +70,12 @@
   .media {
     display: flex;
     align-items: center;
+  }
+  .media img {
+    max-width: 2em;
+  }
+  .watered span {
+    color: #2cb5fb;
   }
 
   img {
