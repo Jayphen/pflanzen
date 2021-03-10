@@ -13,5 +13,9 @@ export async function get(req: Request, res: Response) {
     "Content-Type": "application/json",
   });
 
+  if (plant._rawJson.fields.Images) {
+    plant._rawJson.fields.Images = plant._rawJson.fields.Images.reverse();
+  }
+
   res.end(JSON.stringify(plant._rawJson));
 }

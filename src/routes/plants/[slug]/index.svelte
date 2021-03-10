@@ -36,7 +36,7 @@
   .image-grid {
     display: grid;
     grid-gap: 1em;
-    grid-auto-columns: max-content;
+    grid-template-columns: repeat(2, minmax(auto, 1fr));
   }
   figure {
     padding: 1em;
