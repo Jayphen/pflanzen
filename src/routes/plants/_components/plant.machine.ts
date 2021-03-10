@@ -52,16 +52,24 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
               },
             }),
           },
+          FAIL: {
+            target: "error",
+          },
         },
       },
       watered: {},
+      error: {
+        on: {
+          FETCH: "loading",
+        },
+      },
     },
   });
 
   const { state, send } = useMachine(plantMachine, {
     actions: {
       load: async () => {
-        const watered: AirtableRecord<PlantField> = await fetcher(
+        let watered: AirtableRecord<PlantField> = await fetcher(
           "plants/water.json",
           {
             method: "PATCH",
@@ -72,9 +80,15 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
               id: plant.id,
             }),
           }
-        ).then((r) => r.json());
+        );
 
-        send({ type: "RESOLVE", data: watered });
+        if (watered.status === 200) {
+          watered = await watered.json();
+
+          send({ type: "RESOLVE", data: watered });
+        } else {
+          send({ type: "FAIL" });
+        }
       },
     },
   });

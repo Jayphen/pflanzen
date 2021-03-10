@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Auth from "./Auth.svelte";
+
   export let segment: string;
 </script>
 
@@ -17,6 +19,7 @@
       >
     </li>
   </ul>
+  <Auth />
 </nav>
 
 <style>
@@ -24,6 +27,10 @@
     border-bottom: 1px solid rgba(255, 62, 0, 0.1);
     font-weight: 300;
     padding: 0 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
 
   ul {

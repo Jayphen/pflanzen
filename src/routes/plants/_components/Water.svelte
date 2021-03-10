@@ -1,7 +1,7 @@
 <script lang="ts">
   import type { PlantField } from "../../../airtable";
-
-  export let state: any;
+  type Todo = any;
+  export let state: Todo;
   export let water: () => void;
 
   let fields: PlantField;
@@ -16,6 +16,10 @@
   <span class="watered">💦 Watered!</span>
 {:else if state.matches("loading")}
   <button disabled={true}>Watering</button>
+{:else if state.matches("error")}
+  <button on:click={water}
+    >Try again. <small>Maybe you are not me?</small></button
+  >
 {:else}
   <button on:click={water}>Water plant</button>
 {/if}

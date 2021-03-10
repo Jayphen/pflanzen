@@ -36,6 +36,8 @@
     "@typescript-eslint/parser": "^4.17.0",
     "@xstate/fsm": "^1.6.0",
     "airtable": "^0.10.1",
+    "cookie-parser": "^1.4.5",
+    "cookie-session": "^1.4.0",
     "date-fns": "^2.19.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.21.0",
