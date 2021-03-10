@@ -10,7 +10,6 @@ export async function post(req: Request, res: Response) {
     });
     res.end(JSON.stringify({ success: true }));
   } else {
-    req.session.auth = false;
     res.writeHead(401, {
       "Content-Type": "application/json",
     });
