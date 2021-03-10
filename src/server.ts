@@ -15,6 +15,7 @@ const app = express().use(
     secret: process.env.SECRET,
     // Cookie Options
     maxAge: 7 * 24 * 60 * 60 * 1000, // 24 hours
+    sameSite: "strict",
   }),
   express.json(),
   setCacheHeaders,
