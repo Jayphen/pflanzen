@@ -93,8 +93,10 @@
 </div>
 
 <style>
-  .active {
-    width: 100%;
+  @media (max-width: 768px) {
+    .active {
+      width: 100%;
+    }
   }
   button,
   input {
