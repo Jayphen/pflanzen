@@ -49,6 +49,7 @@
   h2 {
     margin: 0;
     font-size: 1.2em;
+    font-weight: bold;
   }
   .plant {
     padding: 1em;

@@ -18,6 +18,11 @@
   :global(html) {
     --c-bg: #f3f8ef;
   }
+  @media (max-width: 768px) {
+    :global(body) {
+      font-size: 14px;
+    }
+  }
   :global(html, body, #sapper) {
     height: 100%;
   }
