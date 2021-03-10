@@ -24,7 +24,7 @@ const app = express()
     express.urlencoded({ extended: true }),
     compression({ threshold: 0 }),
     sirv("static", { dev }),
-    sapper.middleware({ session: (req) => ({ auth: !!req.session.auth }) })
+    sapper.middleware({ session: (req) => ({ auth: !!req.session?.auth }) })
   );
 
 export default app;
