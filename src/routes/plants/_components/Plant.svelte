@@ -30,6 +30,8 @@
       <img
         src={plant.fields.Images[0].thumbnails.small.url}
         alt={`${plant.fields.Name}'s latest image`}
+        height={plant.fields.Images[0].thumbnails.small.height}
+        width={plant.fields.Images[0].thumbnails.small.width}
       />
     {:else}
       <img
@@ -38,7 +40,7 @@
       />
     {/if}
     <header class:watered={$state.matches("watered")}>
-      <h2>{plant.fields.Name}</h2>
+      <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
       {#if $state.matches("watered")}
         <span>Watered today!</span>
       {:else}

@@ -5,6 +5,10 @@ export async function get(_, res) {
 
   const collator = new Intl.Collator("en", { numeric: true });
 
+  res.setHeader(
+    "Cache-Control",
+    "max-age=60, stale-while-revalidate=120, stale-if-error, public"
+  );
   res.writeHead(200, {
     "Content-Type": "application/json",
   });
