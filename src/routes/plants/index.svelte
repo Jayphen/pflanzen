@@ -4,6 +4,10 @@
       f: this.fetch,
     }).then((r) => r.json());
 
+    if (data.error) {
+      this.error(500, data.error);
+    }
+
     return { data };
   }
 </script>
