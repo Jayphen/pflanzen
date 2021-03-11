@@ -14,6 +14,7 @@
   import { format } from "date-fns";
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
+  import Diary from "./_components/Diary.svelte";
   import Notes from "./_components/Notes.svelte";
 
   export let data: {
@@ -21,7 +22,6 @@
     diary: AirtableRecord<any>[];
   };
 
-  console.log(data);
   const plant = data.plant;
 </script>
 
@@ -30,13 +30,7 @@
 
   {#if plant.fields.Notes}<Notes {plant} />{/if}
 
-  {#if data.diary}
-    {#each data.diary as entry}
-      <h3>{entry.fields.Title}</h3>
-      <small>{format(new Date(entry.createdTime), "dd/MM/yyyy")}</small>
-      <p>{entry.fields.Entry}</p>
-    {/each}
-  {/if}
+  {#if data.diary}<Diary diary={data.diary} />{/if}
 
   {#if plant.fields.Images}
     <div class="image-grid">
