@@ -38,6 +38,9 @@
     grid-gap: 1em;
     grid-template-columns: repeat(2, minmax(auto, 1fr));
   }
+  img {
+    width: 100%;
+  }
   figure {
     padding: 1em;
     margin: 0;
