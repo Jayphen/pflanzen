@@ -15,21 +15,25 @@
 <script lang="ts">
   import { setContext } from "svelte";
 
-  import type { AirtableRecord, PlantField } from "../../airtable";
   import { initPlantsStore, plantsContext } from "../../stores/plants.store";
   import { fetcher } from "../../lib/fetcher";
   import { flip } from "svelte/animate";
   import Plant from "./_components/Plant.svelte";
+  import type { ResolvedPlants } from "../api/plants/index.json";
 
-  export let data: AirtableRecord<PlantField>[];
+  export let data: ResolvedPlants;
 
-  const plants = initPlantsStore(data);
+  const plants = initPlantsStore(data.plants);
   setContext(plantsContext, plants);
 </script>
 
 <svelte:head>
   <title>Pflanzen</title>
 </svelte:head>
+
+<p>
+  Wow, you have {$plants.size} plants. Have you thought about buying some more?
+</p>
 
 <ul>
   {#each Array.from($plants) as [id, plant] (id)}

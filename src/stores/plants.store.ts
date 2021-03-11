@@ -1,4 +1,4 @@
-import { Writable, writable } from "svelte/store";
+import { Writable, writable, get } from "svelte/store";
 import type { AirtableRecord, PlantField } from "../airtable";
 
 export type PlantsStore = Writable<Map<string, AirtableRecord<PlantField>>> & {
@@ -12,6 +12,7 @@ export const initPlantsStore = (data: AirtableRecord<PlantField>[]) => {
     subscribe: store.subscribe,
     update: store.update,
     patch: (plant: AirtableRecord<PlantField>) => {
+      // optimistically update the plant list
       store.update(($plants) => {
         $plants.delete(plant.id);
         $plants.set(plant.id, plant);

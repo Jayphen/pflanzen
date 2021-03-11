@@ -20,7 +20,7 @@ interface Image {
 
 interface AirtableRecord<T> {
   fields: T;
-  createdTime: string;
+  createdTime?: string;
   id: string;
 }
 

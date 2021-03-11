@@ -1,6 +1,13 @@
+import type { Request, Response } from "express";
+import type { AirtableRecord, PlantField } from "../../../airtable";
 import { base } from "../_lib/airtable";
 
-export async function get(_, res) {
+// todo: sorting? filtering?
+export interface ResolvedPlants {
+  plants: AirtableRecord<PlantField>[];
+}
+
+export async function get(_: Request, res: Response) {
   try {
     const pages = await base(process.env.AIRTABLE_BASE).select().all();
     const collator = new Intl.Collator("en", { numeric: true });
@@ -10,13 +17,13 @@ export async function get(_, res) {
     });
 
     res.end(
-      JSON.stringify(
-        pages
+      JSON.stringify({
+        plants: pages
           .map((page) => page._rawJson)
           .sort((a, b) =>
             collator.compare(a.fields["Last Watered"], b.fields["Last Watered"])
-          )
-      )
+          ),
+      })
     );
   } catch (e) {
     console.log(e);
