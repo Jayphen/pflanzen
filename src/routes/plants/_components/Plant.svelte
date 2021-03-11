@@ -39,11 +39,15 @@
       <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
       {#if $state.matches("watered")}
         <span>Watered today!</span>
-      {:else}
+      {:else if plant.fields["Last Watered"]}
         <span>
           last watered
           {formatDate(plant.fields["Last Watered"])}
         </span>
+      {:else}
+        <span class="never-watered"
+          >Not watered yet! Welcome to the family, {plant.fields.Name}</span
+        >
       {/if}
     </header>
   </div>
@@ -74,6 +78,9 @@
   }
   .watered span {
     color: #2cb5fb;
+  }
+  .never-watered {
+    font-size: 0.75em;
   }
 
   img {

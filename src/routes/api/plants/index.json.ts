@@ -20,8 +20,19 @@ export async function get(_: Request, res: Response) {
       JSON.stringify({
         plants: pages
           .map((page) => page._rawJson)
-          .sort((a, b) =>
-            collator.compare(a.fields["Last Watered"], b.fields["Last Watered"])
+          .sort(
+            (a: AirtableRecord<PlantField>, b: AirtableRecord<PlantField>) => {
+              if (!a.fields["Last Watered"]) {
+                return -1;
+              }
+              if (!b.fields["Last Watered"]) {
+                return 1;
+              }
+              return collator.compare(
+                a.fields["Last Watered"],
+                b.fields["Last Watered"]
+              );
+            }
           ),
       })
     );
