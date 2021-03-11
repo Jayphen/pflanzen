@@ -12,8 +12,16 @@ type Event =
   | { type: "RETRY" }
   | { type: "FAIL" };
 
+type State =
+  | { value: "init"; context: undefined }
+  | { value: "idle"; context: undefined }
+  | { value: "authing"; context: undefined }
+  | { value: "loading"; context: undefined }
+  | { value: "success"; context: undefined }
+  | { value: "fail"; context: undefined };
+
 export const createAuthMachine = () => {
-  const authMachine = createMachine<Context, Event>({
+  const authMachine = createMachine<Context, Event, State>({
     id: "auth",
     initial: "init",
     states: {

@@ -1,4 +1,4 @@
-import { createMachine, assign } from "@xstate/fsm";
+import { createMachine, assign, StateMachine } from "@xstate/fsm";
 import { useMachine } from "xstate-svelte/dist/fsm";
 import { getContext } from "svelte";
 import type { AirtableRecord, PlantField } from "../airtable";
@@ -15,17 +15,19 @@ type Event =
   | { type: "FETCH" }
   | { type: "FAIL" };
 
-type State =
+type WaterState =
   | { value: "boot"; context: Context }
   | { value: "idle"; context: Context }
   | { value: "loading"; context: Context }
   | { value: "watered"; context: Context }
   | { value: "error"; context: Context };
 
+export type WaterMachineState = StateMachine.State<Context, Event, WaterState>;
+
 export const createWaterMachine = (plant: Context["plant"]) => {
   const plants = getContext<PlantsStore>(plantsContext);
 
-  const waterMachine = createMachine<Context, Event, State>({
+  const waterMachine = createMachine<Context, Event, WaterState>({
     id: "fetch",
     initial: "boot",
     context: {

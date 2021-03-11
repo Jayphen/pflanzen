@@ -1,6 +1,7 @@
 <script lang="ts">
-  type Todo = any;
-  export let state: Todo;
+  import type { WaterMachineState } from "../../../machines/water.machine";
+
+  export let state: WaterMachineState;
   export let water: () => void;
 </script>
 
