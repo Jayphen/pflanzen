@@ -4,11 +4,6 @@ import { base } from "../../_lib/airtable";
 export async function get(req: Request, res: Response) {
   const plant = await base(process.env.AIRTABLE_BASE).find(req.params.slug);
 
-  res.setHeader(
-    "Cache-Control",
-    "max-age=60, stale-while-revalidate=120, stale-if-error, public"
-  );
-
   res.writeHead(200, {
     "Content-Type": "application/json",
   });
