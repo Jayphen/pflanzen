@@ -35,5 +35,6 @@
     border: 1px solid #afd2a3;
     padding: 1em;
     cursor: pointer;
+    white-space: nowrap;
   }
 </style>
