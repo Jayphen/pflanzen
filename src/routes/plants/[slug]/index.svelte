@@ -1,43 +1,53 @@
 <script lang="ts" context="module">
-  export async function preload(page) {
+  import type { Preload } from "@sapper/common";
+
+  export const preload: Preload = async function preload(this, page) {
     const plant = await fetcher(`api/plants/${page.params.slug}.json`, {
       f: this.fetch,
     }).then((r) => r.json());
 
     return { plant };
-  }
+  };
 </script>
 
 <script lang="ts">
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
+  import Notes from "./_components/Notes.svelte";
 
   export let plant: AirtableRecord<PlantField>;
 </script>
 
-<h1>{plant.fields.Name}</h1>
+<div class="wrapper">
+  <h1>{plant.fields.Name}</h1>
 
-{#if plant.fields.Notes}
-  {@html plant.fields.Notes}
-{/if}
+  {#if plant.fields.Notes}<Notes {plant} />{/if}
 
-{#if plant.fields.Images}
-  <div class="image-grid">
-    {#each plant.fields.Images as image}
-      <figure>
-        <img
-          src={image.thumbnails.large.url}
-          alt={`Picture of ${plant.fields.Name}`}
-        />
-        <figcaption>{image.filename}</figcaption>
-      </figure>
-    {/each}
-  </div>
-{:else}
-  <p>No image!</p>
-{/if}
+  {#if plant.fields.Images}
+    <div class="image-grid">
+      {#each plant.fields.Images as image}
+        <figure>
+          <img
+            src={image.thumbnails.large.url}
+            alt={`Picture of ${plant.fields.Name}`}
+          />
+          <figcaption>{image.filename}</figcaption>
+        </figure>
+      {/each}
+    </div>
+  {:else}
+    <p>No image!</p>
+  {/if}
+</div>
 
 <style>
+  .wrapper {
+    display: grid;
+    grid-gap: 1em;
+  }
+  .wrapper > :global(*) {
+    margin: 0;
+  }
   .image-grid {
     display: grid;
     grid-gap: 1em;

@@ -1,5 +1,7 @@
 <script context="module" lang="ts">
-  export async function preload() {
+  import type { Preload } from "@sapper/common";
+
+  export const preload: Preload = async function preload() {
     const data = await fetcher("api/plants.json", {
       f: this.fetch,
     }).then((r) => r.json());
@@ -9,7 +11,7 @@
     }
 
     return { data };
-  }
+  };
 </script>
 
 <script lang="ts">
