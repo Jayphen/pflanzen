@@ -1,22 +1,35 @@
 import { createMachine, assign } from "@xstate/fsm";
 import { useMachine } from "xstate-svelte/dist/fsm";
 import { getContext } from "svelte";
-import type { AirtableRecord, PlantField } from "../../../airtable";
-import { fetcher } from "../../../lib/fetcher";
-import { plantsContext, PlantsStore } from "../../../stores/plants.store";
+import type { AirtableRecord, PlantField } from "../airtable";
+import { fetcher } from "../lib/fetcher";
+import { plantsContext, PlantsStore } from "../stores/plants.store";
 
-export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
+interface Context {
+  plant: AirtableRecord<PlantField>;
+}
+
+type Event =
+  | { type: "INIT" }
+  | { type: "RESOLVE"; data: Context["plant"] }
+  | { type: "FETCH" }
+  | { type: "FAIL" };
+
+type State =
+  | { value: "boot"; context: Context }
+  | { value: "idle"; context: Context }
+  | { value: "loading"; context: Context }
+  | { value: "watered"; context: Context }
+  | { value: "error"; context: Context };
+
+export const createWaterMachine = (plant: Context["plant"]) => {
   const plants = getContext<PlantsStore>(plantsContext);
-  let $plants: Map<string, AirtableRecord<PlantField>>;
 
-  const unsubscribe = plants.subscribe((store) => ($plants = store));
-
-  const plantMachine = createMachine({
+  const waterMachine = createMachine<Context, Event, State>({
     id: "fetch",
     initial: "boot",
     context: {
-      data: plant,
-      plants: $plants,
+      plant,
     },
     states: {
       boot: {
@@ -44,13 +57,16 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
         on: {
           RESOLVE: {
             target: "watered",
-            actions: assign({
-              data: (_, event) => {
-                plants.patch(event.data);
-
-                return event.data;
+            actions: [
+              (_, event) => {
+                if (event.type === "RESOLVE") {
+                  plants.patch(event.data);
+                }
               },
-            }),
+              assign({
+                plant: (_, event) => event.data,
+              }),
+            ],
           },
           FAIL: {
             target: "error",
@@ -66,24 +82,21 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
     },
   });
 
-  const { state, send } = useMachine(plantMachine, {
+  const { state, send } = useMachine(waterMachine, {
     actions: {
       load: async () => {
-        let watered: AirtableRecord<PlantField> = await fetcher(
-          "plants/water.json",
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              id: plant.id,
-            }),
-          }
-        );
+        const _watered = await fetcher("api/plants/water.json", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            id: plant.id,
+          }),
+        });
 
-        if (watered.status === 200) {
-          watered = await watered.json();
+        if (_watered.status === 200) {
+          const watered = await _watered.json();
 
           send({ type: "RESOLVE", data: watered });
         } else {
@@ -94,7 +107,6 @@ export const createPlantMachine = (plant: AirtableRecord<PlantField>) => {
   });
 
   return {
-    unsubscribe,
     state,
     init: () => send("INIT"),
     water: () => send("FETCH"),

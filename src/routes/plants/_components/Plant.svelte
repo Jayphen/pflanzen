@@ -9,19 +9,15 @@
 </script>
 
 <script lang="ts">
-  import { onDestroy } from "svelte";
-
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import Water from "./Water.svelte";
-  import { createPlantMachine } from "./plant.machine";
+  import { createWaterMachine } from "../../../machines/water.machine";
 
   export let plant: AirtableRecord<PlantField>;
 
-  const { state, init, water, unsubscribe } = createPlantMachine(plant);
+  const { state, init, water } = createWaterMachine(plant);
 
   init();
-
-  onDestroy(unsubscribe);
 </script>
 
 <div class="plant">

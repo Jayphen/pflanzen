@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
   export async function preload(page) {
-    const plant = await fetcher(`plants/${page.params.slug}.json`, {
+    const plant = await fetcher(`api/plants/${page.params.slug}.json`, {
       f: this.fetch,
     }).then((r) => r.json());
 

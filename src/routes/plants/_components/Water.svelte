@@ -1,15 +1,7 @@
 <script lang="ts">
-  import type { PlantField } from "../../../airtable";
   type Todo = any;
   export let state: Todo;
   export let water: () => void;
-
-  let fields: PlantField;
-  $: ({
-    context: {
-      data: { fields },
-    },
-  } = state);
 </script>
 
 {#if state.matches("watered")}
