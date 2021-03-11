@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
+  import { formatDistanceToNow } from "date-fns";
+
   const formatDate = (date: string) => {
-    if (!date) return "Never";
-    const _date = new Date(date);
-    return new Intl.DateTimeFormat("en-GB", { dateStyle: "full" }).format(
-      _date
-    );
+    const [year, month, day] = date.split("-");
+    return formatDistanceToNow(new Date(+year, +month - 1, +day), {
+      addSuffix: true,
+    });
   };
 </script>
 
