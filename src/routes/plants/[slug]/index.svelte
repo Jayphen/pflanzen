@@ -9,12 +9,17 @@
 </script>
 
 <script lang="ts">
+  import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
 
-  export let plant;
+  export let plant: AirtableRecord<PlantField>;
 </script>
 
 <h1>{plant.fields.Name}</h1>
+
+{#if plant.fields.Notes}
+  {@html plant.fields.Notes}
+{/if}
 
 {#if plant.fields.Images}
   <div class="image-grid">
