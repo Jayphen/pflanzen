@@ -16,7 +16,12 @@ export async function get(req: Request, res: Response) {
       "', RECORD_ID() = '"
     )}' )`;
 
-    diary = await base("Diary").select({ filterByFormula: query }).all();
+    diary = await base("Diary")
+      .select({
+        filterByFormula: query,
+        sort: [{ field: "created", direction: "desc" }],
+      })
+      .all();
   }
 
   const { _rawJson } = plant;

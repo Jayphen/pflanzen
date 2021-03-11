@@ -11,7 +11,8 @@
 </script>
 
 <script lang="ts">
-  import { format } from "date-fns";
+  import { setContext } from "svelte";
+
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
   import Diary from "./_components/Diary.svelte";
@@ -23,6 +24,8 @@
   };
 
   const plant = data.plant;
+
+  setContext("plant", plant);
 </script>
 
 <div class="wrapper">

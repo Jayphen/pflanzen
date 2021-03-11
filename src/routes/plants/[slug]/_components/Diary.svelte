@@ -9,6 +9,7 @@
 
   import { format } from "date-fns";
   import type { AirtableRecord } from "../../../../airtable";
+  import CreateEntry from "./CreateEntry.svelte";
 
   export let diary: AirtableRecord<any>[];
 </script>
@@ -23,6 +24,8 @@
       <p>{entry.fields.Entry}</p>
     </div>
   {/each}
+
+  <CreateEntry />
 </div>
 
 <style>
@@ -30,6 +33,8 @@
     background: white;
     padding: 1em;
     border-radius: 1em;
+    display: grid;
+    grid-gap: 0.5em;
   }
   .diary-entry > :global(*) {
     display: inline;
