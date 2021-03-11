@@ -2,26 +2,41 @@
   import type { Preload } from "@sapper/common";
 
   export const preload: Preload = async function preload(this, page) {
-    const plant = await fetcher(`api/plants/${page.params.slug}.json`, {
+    const data = await fetcher(`api/plants/${page.params.slug}.json`, {
       f: this.fetch,
     }).then((r) => r.json());
 
-    return { plant };
+    return { data };
   };
 </script>
 
 <script lang="ts">
+  import { format } from "date-fns";
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
   import Notes from "./_components/Notes.svelte";
 
-  export let plant: AirtableRecord<PlantField>;
+  export let data: {
+    plant: AirtableRecord<PlantField>;
+    diary: AirtableRecord<any>[];
+  };
+
+  console.log(data);
+  const plant = data.plant;
 </script>
 
 <div class="wrapper">
   <h1>{plant.fields.Name}</h1>
 
   {#if plant.fields.Notes}<Notes {plant} />{/if}
+
+  {#if data.diary}
+    {#each data.diary as entry}
+      <h3>{entry.fields.Title}</h3>
+      <small>{format(new Date(entry.createdTime), "dd/MM/yyyy")}</small>
+      <p>{entry.fields.Entry}</p>
+    {/each}
+  {/if}
 
   {#if plant.fields.Images}
     <div class="image-grid">
