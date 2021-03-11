@@ -33,7 +33,7 @@
 
 <ul>
   {#each Array.from($plants) as [id, plant] (id)}
-    <li animate:flip data-plant={id}>
+    <li animate:flip={{ duration: 500 }} data-plant={id}>
       <Plant {plant} />
     </li>
   {/each}
