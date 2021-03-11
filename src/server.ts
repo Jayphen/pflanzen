@@ -4,6 +4,7 @@ import compression from "compression";
 import * as sapper from "@sapper/server";
 import "dotenv/config";
 import cookieSession from "cookie-session";
+import type { SapperRequest } from "@sapper/server";
 
 const { PORT, NODE_ENV } = process.env;
 const dev = NODE_ENV === "development";
@@ -22,7 +23,11 @@ const app = express()
     express.urlencoded({ extended: true }),
     compression({ threshold: 0 }),
     sirv("static", { dev }),
-    sapper.middleware({ session: (req) => ({ auth: !!req.session?.auth }) })
+    sapper.middleware({
+      session: (req: SapperRequest & { session?: any }) => ({
+        auth: !!req.session?.auth,
+      }),
+    })
   );
 
 export default app;
