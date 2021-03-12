@@ -12,6 +12,11 @@ export async function get(_: Request, res: Response) {
     const pages = await base(process.env.AIRTABLE_BASE).select().all();
     const collator = new Intl.Collator("en", { numeric: true });
 
+    res.setHeader(
+      "Cache-Control",
+      "max-age=5, s-max-age=15, public, must-revalidate"
+    );
+
     res.writeHead(200, {
       "Content-Type": "application/json",
     });
