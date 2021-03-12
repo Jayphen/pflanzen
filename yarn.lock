@@ -2096,6 +2096,11 @@ html-minifier@^4.0.0:
     relateurl "^0.2.7"
     uglify-js "^3.5.1"
 
+html-parser-lite@^0.2.1:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/html-parser-lite/-/html-parser-lite-0.2.2.tgz#7e4fd085e4120a4b83650521174f294054afbb85"
+  integrity sha512-ti6jFyoja2ltR5stLrcs5S1H/0Mf8WImmt4IJ1JkTbxqloaNcaK7Tdoqp38jXE9ZOdB1rfYxdtuFFWxOcm2waw==
+
 http-errors@1.7.2:
   version "1.7.2"
   resolved "https://registry.yarnpkg.com/http-errors/-/http-errors-1.7.2.tgz#4f5029cf13239f31036e5b2e55292bcfbcc85c8f"
@@ -3003,6 +3008,13 @@ svelte-preprocess@^4.0.0, svelte-preprocess@^4.3.0:
     "@types/sass" "^1.16.0"
     detect-indent "^6.0.0"
     strip-indent "^3.0.0"
+
+svelte-shortcodes@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/svelte-shortcodes/-/svelte-shortcodes-1.2.1.tgz#f38a853c3db485dec2f36ed99acb976913b8a394"
+  integrity sha512-n+Jgutsw4jLc43BG+nWNEeuQ2uAg+GsMsmPchtdDRD2EkxPhWxMPvg64H6rU89CwYkUbcImvar2QXgG6VePWHw==
+  dependencies:
+    html-parser-lite "^0.2.1"
 
 svelte@^3.17.3:
   version "3.35.0"

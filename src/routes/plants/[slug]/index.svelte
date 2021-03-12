@@ -16,6 +16,7 @@
   import type { AirtableRecord, PlantField } from "../../../airtable";
   import { fetcher } from "../../../lib/fetcher";
   import Diary from "./_components/Diary.svelte";
+  import Gallery from "./_components/Gallery.svelte";
   import Notes from "./_components/Notes.svelte";
 
   export let data: {
@@ -36,17 +37,7 @@
   {#if data.diary}<Diary diary={data.diary} />{/if}
 
   {#if plant.fields.Images}
-    <div class="image-grid">
-      {#each plant.fields.Images as image}
-        <figure>
-          <img
-            src={image.thumbnails.large.url}
-            alt={`Picture of ${plant.fields.Name}`}
-          />
-          <figcaption>{image.filename}</figcaption>
-        </figure>
-      {/each}
-    </div>
+    <Gallery {plant} />
   {:else}
     <p>No image!</p>
   {/if}
@@ -59,20 +50,5 @@
   }
   .wrapper > :global(*) {
     margin: 0;
-  }
-  .image-grid {
-    display: grid;
-    grid-gap: 1em;
-    grid-template-columns: repeat(2, minmax(auto, 1fr));
-  }
-  img {
-    width: 100%;
-  }
-  figure {
-    padding: 1em;
-    margin: 0;
-    background: white;
-    text-align: center;
-    font-size: 0.875em;
   }
 </style>

@@ -10,6 +10,7 @@
   import { format } from "date-fns";
   import type { AirtableRecord } from "../../../../airtable";
   import CreateEntry from "./CreateEntry.svelte";
+  import Shortcodes from "./Shortcodes.svelte";
 
   export let diary: AirtableRecord<any>[];
 </script>
@@ -21,7 +22,7 @@
       {#if entry.fields.Title}
         <h3>{entry.fields.Title}</h3>
       {/if}
-      <p>{entry.fields.Entry}</p>
+      <Shortcodes content={entry.fields.Entry} />
     </div>
   {/each}
 
