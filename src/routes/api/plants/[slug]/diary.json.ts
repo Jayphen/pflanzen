@@ -2,12 +2,11 @@ import type { Request, Response } from "express";
 import { base } from "../../_lib/airtable";
 
 export async function post(req: Request, res: Response) {
-  console.log("eyyy");
   if (req.session.auth) {
     const create = await base("Diary").create({
       Title: req.body.title,
       Entry: req.body.entry,
-      dev: [req.params.slug],
+      [process.env.AIRTABLE_BASE]: [req.params.slug],
     });
 
     res.writeHead(200, {

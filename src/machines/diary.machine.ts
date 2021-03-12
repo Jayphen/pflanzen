@@ -83,7 +83,6 @@ export const createDiaryMachine = (plantId: string) => {
 };
 
 function post(plantId: string, vals: DiaryFields) {
-  console.log(vals);
   return fetcher(`api/plants/${plantId}/diary.json`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
