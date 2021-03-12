@@ -52,7 +52,7 @@
   {#if highlightedImage}
     <figure
       in:receive={{ key: highlightedImage.id }}
-      out:send={{ key: lastHighlighted }}
+      out:send|local={{ key: lastHighlighted }}
       class="highlighted-view"
     >
       <button class="back" on:click={resetView}>go back to all images</button>

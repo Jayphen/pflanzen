@@ -26,26 +26,41 @@
   export let data: ResolvedPlants;
 
   const plants = initPlantsStore(data.plants);
+
   setContext(plantsContext, plants);
+
+  let filterValue = "";
+  $: filtered = plants.filter(filterValue);
 </script>
 
 <svelte:head>
   <title>Pflanzen</title>
 </svelte:head>
 
-<p>
-  Wow, you have {$plants.size} plants. Have you thought about buying some more?
-</p>
+<div class="wrapper">
+  <p>
+    Wow, you have {$plants.size} plants. Have you thought about buying some more?
+  </p>
 
-<ul>
-  {#each Array.from($plants) as [id, plant] (id)}
-    <li animate:flip={{ duration: 500 }} data-plant={id}>
-      <Plant {plant} />
-    </li>
-  {/each}
-</ul>
+  <div>
+    <label for="filter">Filter plants:</label>
+    <input id="filter" bind:value={filterValue} />
+  </div>
+
+  <ul>
+    {#each Array.from($filtered.plants) as [id, plant] (id)}
+      <li animate:flip={{ duration: 500 }} data-plant={id}>
+        <Plant {plant} />
+      </li>
+    {/each}
+  </ul>
+</div>
 
 <style>
+  .wrapper {
+    display: grid;
+    grid-gap: 1em;
+  }
   ul,
   li {
     margin: 0;

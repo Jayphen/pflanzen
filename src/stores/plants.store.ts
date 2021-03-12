@@ -1,4 +1,4 @@
-import { Writable, writable, get } from "svelte/store";
+import { Writable, writable, derived } from "svelte/store";
 import type { AirtableRecord, PlantField } from "../airtable";
 
 export type PlantsStore = Writable<Map<string, AirtableRecord<PlantField>>> & {
@@ -19,6 +19,17 @@ export const initPlantsStore = (data: AirtableRecord<PlantField>[]) => {
         return $plants;
       });
     },
+    filter: (term: string) =>
+      derived(store, ($plants) => {
+        const _filtered = [...$plants.values()].filter((plant) =>
+          plant.fields.Name.toLowerCase().includes(term.toLowerCase())
+        );
+
+        return {
+          plants: new Map(_filtered.map((plant) => [plant.id, plant])),
+          filtering: term !== "",
+        };
+      }),
   };
 };
 
