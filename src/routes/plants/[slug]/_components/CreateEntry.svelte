@@ -19,7 +19,12 @@
   {:else if $state.matches("inputting")}
     <div class="fields">
       <label for="title">Title (optional)</label>
-      <input type="text" id="title" bind:value={vals.title} />
+      <input
+        type="text"
+        id="title"
+        bind:value={vals.title}
+        autocomplete="off"
+      />
     </div>
     <div class="fields">
       <label for="entry">Entry (optional, markdown is ok)</label>
