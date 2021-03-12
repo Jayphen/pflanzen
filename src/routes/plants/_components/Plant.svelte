@@ -23,19 +23,21 @@
 
 <div class="plant">
   <div class="media">
-    {#if plant.fields.Images}
-      <img
-        src={plant.fields.Images[0].thumbnails.small.url}
-        alt={`${plant.fields.Name}'s latest image`}
-        height={plant.fields.Images[0].thumbnails.small.height}
-        width={plant.fields.Images[0].thumbnails.small.width}
-      />
-    {:else}
-      <img
-        src="images/plant.png"
-        alt={`${plant.fields.Name} placeholder image`}
-      />
-    {/if}
+    <a href={`plants/${plant.id}`}>
+      {#if plant.fields.Images}
+        <img
+          src={plant.fields.Images[0].thumbnails.small.url}
+          alt={`${plant.fields.Name}'s latest image`}
+          height={plant.fields.Images[0].thumbnails.small.height}
+          width={plant.fields.Images[0].thumbnails.small.width}
+        />
+      {:else}
+        <img
+          src="images/plant.png"
+          alt={`${plant.fields.Name} placeholder image`}
+        />
+      {/if}
+    </a>
     <header class:watered={$state.matches("watered")}>
       <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
       {#if $state.matches("watered")}
