@@ -76,7 +76,8 @@
   }
   @media (max-width: 768px) {
     ul {
-      grid-template-columns: repeat(2, minmax(14em, 1fr));
+      grid-template-columns: repeat(2, 1fr);
+      grid-gap: 0.5em;
     }
   }
   li {

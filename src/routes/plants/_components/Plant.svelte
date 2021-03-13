@@ -40,9 +40,9 @@
   <header class:watered={$state.matches("watered")}>
     <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
     {#if $state.matches("watered")}
-      <span>Watered today!</span>
+      <span class="watered-today">Watered today!</span>
     {:else if plant.fields["Last Watered"]}
-      <span>
+      <span class="last-watered">
         last watered
         {formatDate(plant.fields["Last Watered"])}
       </span>
@@ -72,7 +72,25 @@
       "img content"
       "button button";
   }
+  @media (max-width: 768px) {
+    .plant {
+      text-align: center;
+      grid-template-columns: 1fr;
+      grid-template-rows: min-content;
+      grid-template-areas:
+        "img img"
+        "content content"
+        "button button";
+    }
+  }
 
+  .plant :global(:first-child) {
+    grid-area: img;
+  }
+  .plant :global(:nth-child(2)) {
+    grid-area: content;
+    margin-bottom: auto;
+  }
   .plant :global(:last-child) {
     grid-area: button;
     margin-top: auto;
@@ -83,7 +101,9 @@
   .watered span {
     color: #2cb5fb;
   }
-  .never-watered {
+  .never-watered,
+  .last-watered,
+  .watered-today {
     font-size: 0.75em;
     line-height: 1.3;
     display: block;
