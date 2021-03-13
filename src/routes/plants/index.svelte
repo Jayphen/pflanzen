@@ -49,7 +49,7 @@
 
   <ul>
     {#each Array.from($filtered.plants) as [id, plant] (id)}
-      <li animate:flip={{ duration: 500 }} data-plant={id}>
+      <li animate:flip={{ duration: 300 }} data-plant={id}>
         <Plant {plant} />
       </li>
     {/each}
@@ -72,5 +72,16 @@
     list-style: none;
     display: grid;
     grid-gap: 1em;
+    grid-template-columns: repeat(3, minmax(14em, 1fr));
+  }
+  @media (max-width: 768px) {
+    ul {
+      grid-template-columns: repeat(2, minmax(14em, 1fr));
+    }
+  }
+  li {
+    padding: 1em;
+    background: white;
+    border-radius: 1em;
   }
 </style>
