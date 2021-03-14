@@ -3,17 +3,20 @@
   import { stores, goto } from "@sapper/app";
   const { page } = stores();
 
-  import { crossfade, scale } from "svelte/transition";
+  // disabling animation until I have time to figure out how to prevent it
+  // running when exiting the page
 
-  const [send, receive] = crossfade({
-    duration: 300,
-    fallback: scale,
-  });
+  /* import { crossfade, scale } from "svelte/transition"; */
+
+  /* const [send, receive] = crossfade({ */
+  /*   duration: 300, */
+  /*   fallback: scale, */
+  /* }); */
 
   export let plant: AirtableRecord<PlantField>;
 
   let highlightedImage: Image;
-  let lastHighlighted: string = $page.query.image?.toString();
+  /* let lastHighlighted: string = $page.query.image?.toString(); */
 
   // toggle full-screen image based on query param
   // this also enables sharing a link with a full image view
@@ -21,7 +24,7 @@
     highlightedImage = plant.fields.Images.find(
       (image) => image.id === $page.query.image
     );
-    lastHighlighted = highlightedImage.id;
+    /* lastHighlighted = highlightedImage.id; */
   } else {
     highlightedImage = undefined;
   }
@@ -43,30 +46,27 @@
       const url = new URL(window.location.toString());
       url.searchParams.set("image", image.id);
       goto(url.toString(), { replaceState: true });
-      lastHighlighted = image.id;
+      /* lastHighlighted = image.id; */
     };
   }
 </script>
 
 <div class="container">
   {#if highlightedImage}
-    <figure
-      in:receive={{ key: highlightedImage.id }}
-      out:send|local={{ key: lastHighlighted }}
-      class="highlighted-view"
-    >
+    <figure class="highlighted-view">
       <button class="back" on:click={resetView}>go back to all images</button>
       <img
         src={highlightedImage.thumbnails.full.url}
         alt={`Picture of ${plant.fields.Name}`}
         id={highlightedImage.id}
+        on:click={resetView}
       />
       <figcaption>{highlightedImage.filename}</figcaption>
     </figure>
   {:else}
     <div class="image-grid">
       {#each plant.fields.Images as image (image.id)}
-        <figure in:receive={{ key: image.id }} out:send={{ key: image.id }}>
+        <figure>
           <img
             src={image.thumbnails.large.url}
             alt={`Picture of ${plant.fields.Name}`}
@@ -104,6 +104,7 @@
   img {
     width: 100%;
     object-fit: fill;
+    cursor: pointer;
   }
   figure {
     padding: 1em;
