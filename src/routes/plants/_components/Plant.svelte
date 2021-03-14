@@ -23,12 +23,15 @@
 
 <div class="plant">
   <a href={`plants/${plant.id}`}>
+    <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
     {#if plant.fields.Images}
       <img
-        src={plant.fields.Images[0].thumbnails.small.url}
+        src={plant.fields.Images[plant.fields.Images.length - 1].thumbnails
+          .large.url}
         alt={`${plant.fields.Name}'s latest image`}
-        height={plant.fields.Images[0].thumbnails.small.height}
-        width={plant.fields.Images[0].thumbnails.small.width}
+        width={plant.fields.Images[plant.fields.Images.length - 1].thumbnails
+          .large.width}
+        loading="lazy"
       />
     {:else}
       <img
@@ -38,7 +41,6 @@
     {/if}
   </a>
   <header class:watered={$state.matches("watered")}>
-    <h2><a href={`plants/${plant.id}`}>{plant.fields.Name}</a></h2>
     {#if $state.matches("watered")}
       <span class="watered-today">Watered today!</span>
     {:else if plant.fields["Last Watered"]}
@@ -62,26 +64,25 @@
     font-size: 1.2em;
     font-weight: bold;
   }
+  .plant > a {
+    display: block;
+  }
   .plant {
     display: grid;
     grid-gap: 0.5em;
     align-items: center;
     height: 100%;
-    grid-template-columns: auto 1fr;
+    text-align: center;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content;
     grid-template-areas:
-      "img content"
+      "img img"
+      "content content"
       "button button";
   }
-  @media (max-width: 768px) {
-    .plant {
-      text-align: center;
-      grid-template-columns: 1fr;
-      grid-template-rows: min-content;
-      grid-template-areas:
-        "img img"
-        "content content"
-        "button button";
-    }
+  .plant img {
+    margin-top: 0.5em;
+    padding-right: 0;
   }
 
   .plant :global(:first-child) {
@@ -96,7 +97,8 @@
     margin-top: auto;
   }
   img {
-    max-width: 2em;
+    max-width: 100%;
+    aspect-ratio: 3/4;
   }
   .watered span {
     color: #2cb5fb;
